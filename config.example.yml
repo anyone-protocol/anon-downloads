@@ -17,6 +17,10 @@ artifacts:
     regexp: '^anon.+-live-.+bookworm.+amd64\.deb'
   - name: debian-bookworm-arm64
     regexp: '^anon.+-live-.+bookworm.+arm64\.deb'
+  - name: ubuntu-oracular-amd64
+    regexp: '^anon.+-live-.+oracular.+amd64\.deb'
+  - name: ubuntu-oracular-arm64
+    regexp: '^anon.+-live-.+oracular.+arm64\.deb'
   - name: ubuntu-focal-amd64
     regexp: '^anon.+-live-.+focal.+amd64\.deb'
   - name: ubuntu-focal-arm64
