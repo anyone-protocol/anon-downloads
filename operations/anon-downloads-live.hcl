@@ -1,7 +1,7 @@
 job "anon-downloads-live" {
   datacenters = ["ator-fin"]
   type = "service"
-  namespace = "ator-network"
+  namespace = "live-services"
 
   group "anon-downloads-group" {
     count = 1
@@ -31,7 +31,13 @@ job "anon-downloads-live" {
       }
 
       vault {
-        policies = ["anon-downloads"]
+        role = "any1-nomad-workloads-controller"
+      }
+
+      identity {
+        name = "vault_default"
+        aud  = ["any1-infra"]
+        ttl  = "1h"
       }
 
       resources {
@@ -66,7 +72,7 @@ job "anon-downloads-live" {
         data = <<EOH
 owner: anyone-protocol
 repo: ator-protocol
-{{with secret "kv/anon-downloads"}}
+{{with secret "kv/live-services/anon-downloads-live"}}
 token: "{{.Data.data.GITHUB_TOKEN}}"
 {{end}}
 cachePeriod: 15m
