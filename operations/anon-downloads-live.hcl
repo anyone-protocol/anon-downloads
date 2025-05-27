@@ -2,20 +2,44 @@ job "anon-downloads-live" {
   datacenters = ["ator-fin"]
   type = "service"
   namespace = "live-services"
+  
+  constraint {
+    attribute = "${meta.pool}"
+    value = "live-services"
+  }
 
   group "anon-downloads-group" {
     count = 1
-
-    constraint {
-      attribute = "${node.unique.id}"
-      value     = "c8e55509-a756-0aa7-563b-9665aa4915ab"
-    }
 
     network  {
       mode = "bridge"
       port "downloads-http" {
         to = 8080
         host_network = "wireguard"
+      }
+    }
+
+    service {
+      name = "anon-downloads"
+      port = "downloads-http"
+      tags = [
+        "traefik.enable=true",
+        "traefik.http.routers.any1-downloads.entrypoints=https",
+        "traefik.http.routers.any1-downloads.rule=Host(`download.en.anyone.tech`)",
+        "traefik.http.routers.any1-downloads.tls=true",
+        "traefik.http.routers.any1-downloads.tls.certresolver=anyoneresolver",
+      ]
+      check {
+        name     = "anon downloads alive"
+        type     = "tcp"
+        port     = "downloads-http"
+        interval = "10s"
+        timeout  = "10s"
+        address_mode = "alloc"
+        check_restart {
+          limit = 10
+          grace = "30s"
+        }
       }
     }
 
@@ -43,29 +67,6 @@ job "anon-downloads-live" {
       resources {
         cpu = 256
         memory = 256
-      }
-
-      service {
-        name = "anon-downloads"
-        port = "downloads-http"
-        tags = [
-          "traefik.enable=true",
-          "traefik.http.routers.any1-downloads.entrypoints=https",
-          "traefik.http.routers.any1-downloads.rule=Host(`download.en.anyone.tech`)",
-          "traefik.http.routers.any1-downloads.tls=true",
-          "traefik.http.routers.any1-downloads.tls.certresolver=anyoneresolver",
-        ]
-        check {
-          name     = "anon downloads alive"
-          type     = "tcp"
-          port     = "downloads-http"
-          interval = "10s"
-          timeout  = "10s"
-          check_restart {
-            limit = 10
-            grace = "30s"
-          }
-        }
       }
 
       template {
