@@ -67,11 +67,7 @@ job "anon-downloads-live" {
         role = "any1-nomad-workloads-controller"
       }
 
-      identity {
-        name = "vault_default"
-        aud  = ["any1-infra"]
-        ttl  = "1h"
-      }
+      consul {}
 
       resources {
         cpu = 256
